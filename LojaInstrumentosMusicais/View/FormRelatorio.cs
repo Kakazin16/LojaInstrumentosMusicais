@@ -1,68 +1,100 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using LojaInstrumentosMusicais.Models;
 using LojaInstrumentosMusicais.Services;
 
 namespace LojaInstrumentosMusicais.View
 {
     public partial class FormRelatorio : Form
     {
-        private readonly DataGridView dgvVendas;
-        private readonly Label lblResumo;
+        private readonly GerenciadorVendas gerenciador;
+        private static readonly CultureInfo ptBR = new CultureInfo("pt-BR");
 
-        public FormRelatorio()
+        public FormRelatorio() : this(new GerenciadorVendas())
         {
-            Text = "Relatório de Vendas";
-            Size = new Size(800, 480);
-            StartPosition = FormStartPosition.CenterScreen;
-
-            var painelTopo = new Panel { Dock = DockStyle.Top, Height = 45 };
-
-            var btnAtualizar = new Button { Text = "Atualizar", Location = new Point(10, 8), Width = 100 };
-            btnAtualizar.Click += (s, e) => CarregarVendas();
-
-            var btnVoltar = new Button { Text = "Voltar", Location = new Point(120, 8), Width = 100 };
-            btnVoltar.Click += (s, e) => Close();
-
-            lblResumo = new Label { Location = new Point(240, 13), AutoSize = true };
-
-            painelTopo.Controls.Add(btnAtualizar);
-            painelTopo.Controls.Add(btnVoltar);
-            painelTopo.Controls.Add(lblResumo);
-
-            dgvVendas = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                ReadOnly = true,
-                AllowUserToAddRows = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            };
-
-            Controls.Add(dgvVendas);
-            Controls.Add(painelTopo);
-
-            Load += (s, e) => CarregarVendas();
         }
 
-        private void CarregarVendas()
+        public FormRelatorio(GerenciadorVendas gerenciador)
         {
-            var gerenciador = GerenciadorVendas.Instancia;
-            var vendas = gerenciador.ListarVendas();
+            InitializeComponent();
+            this.gerenciador = gerenciador ?? new GerenciadorVendas();
 
-            dgvVendas.DataSource = vendas
-                .Select(v => new
+            Load += (sender, e) => CarregarVendas(this.gerenciador.ListarVendas());
+            btnBuscar.Click += (sender, e) => Buscar();
+            btnLimpar.Click += (sender, e) => Limpar();
+            btnFechar.Click += (sender, e) => Close();
+            txtBuscaCliente.KeyDown += (sender, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
                 {
-                    v.Cliente,
-                    v.Instrumento,
-                    Preco = v.Preco.ToString("C"),
-                    OutroPreco = v.OutroPreco.ToString("C"),
-                    Total = v.Total.ToString("C")
-                })
+                    e.SuppressKeyPress = true;
+                    Buscar();
+                }
+            };
+        }
+
+        private void CarregarVendas(IEnumerable<Venda> lista)
+        {
+            dgvVendas.Rows.Clear();
+
+            foreach (Venda venda in lista)
+            {
+                dgvVendas.Rows.Add(
+                    venda.Cliente,
+                    venda.Instrumento,
+                    venda.Preco.ToString("C", ptBR),
+                    venda.OutroPreco.ToString("C", ptBR),
+                    venda.Total.ToString("C", ptBR)
+                );
+            }
+
+            AtualizarResumo(lista);
+        }
+
+        private void AtualizarResumo(IEnumerable<Venda> exibidas)
+        {
+            int qtdExibidas = exibidas.Count();
+            decimal totalExibido = exibidas.Sum(v => v.Total);
+
+            lblQuantidade.Text =
+                $"Vendas exibidas: {qtdExibidas} de {gerenciador.QuantidadeVendas()}";
+            lblFaturamento.Text =
+                $"Faturamento exibido: {totalExibido.ToString("C", ptBR)}   |   " +
+                $"Faturamento total: {gerenciador.CalcularFaturamento().ToString("C", ptBR)}";
+        }
+
+        private void Buscar()
+        {
+            string termo = txtBuscaCliente.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(termo))
+            {
+                CarregarVendas(gerenciador.ListarVendas());
+                return;
+            }
+
+            List<Venda> encontradas = gerenciador.ListarVendas()
+                .Where(v => !string.IsNullOrEmpty(v.Cliente) &&
+                            v.Cliente.IndexOf(termo, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
-            lblResumo.Text = $"{gerenciador.QuantidadeVendas()} venda(s) — Faturamento: {gerenciador.CalcularFaturamento():C}";
+            if (encontradas.Count == 0)
+            {
+                MessageBox.Show("Nenhuma venda encontrada para esse cliente.",
+                    "Relatório de Vendas", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            CarregarVendas(encontradas);
+        }
+
+        private void Limpar()
+        {
+            txtBuscaCliente.Clear();
+            CarregarVendas(gerenciador.ListarVendas());
+            txtBuscaCliente.Focus();
         }
     }
 }
