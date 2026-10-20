@@ -70,7 +70,18 @@ namespace LojaInstrumentosMusicais.View
             if (progressBar.Value >= 100)
             {
                 timer.Stop();
+                AbrirMenu();
             }
+        }
+
+        private void AbrirMenu()
+        {
+            Hide();
+            using (var menu = new FormMenu())
+            {
+                menu.ShowDialog();
+            }
+            Close();
         }
     }
 }
