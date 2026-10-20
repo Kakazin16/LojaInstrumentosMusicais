@@ -8,11 +8,12 @@ using System.Windows.Forms;
 
 namespace LojaInstrumentosMusicais
 {
-    public partial class Form2 : Form
+    public partial class FrmTelaVenda : Form
     {
-        public Form2()
+        public FrmTelaVenda()
         {
             InitializeComponent();
         }
     }
+
 }
