@@ -2,14 +2,6 @@
 {
     partial class FormVenda : Form
     {
-        public FormVenda()
-        {
-            InitializeComponent();
-
-            btnRegistrar.Click += (sender, e) => RegistrarVenda();
-            btnTotal.Click += (sender, e) => CalcularTotal();
-        }
-        private System.ComponentModel.IContainer components = null;
 
         protected override void Dispose(bool disposing)
         {
@@ -27,9 +19,12 @@
             btnRegistrar = new Button();
             txtNome = new TextBox();
             txtNomeInstrumento = new TextBox();
-            textBox1 = new TextBox();
+            txtPreco = new TextBox();
+            txtInstrumento2 = new TextBox();
+            txtPreco1 = new TextBox();
             txtNomeInstrumento2 = new TextBox();
-            textBox2 = new TextBox();
+            txtPreco2 = new TextBox();
+            txtOutroPreco = new TextBox();
             btnTotal = new Button();
             lblLoja = new Label();
             lblVendas = new Label();
@@ -63,12 +58,28 @@
             txtNomeInstrumento.Size = new Size(237, 23);
             txtNomeInstrumento.TabIndex = 6;
             // 
-            // textBox1
+            // txtPreco
             // 
-            textBox1.Location = new Point(158, 159);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(237, 23);
-            textBox1.TabIndex = 9;
+            txtPreco.Location = new Point(34, 159);
+            txtPreco.Name = "txtPreco";
+            txtPreco.Size = new Size(99, 23);
+            txtPreco.TabIndex = 7;
+            txtPreco.Text = "Preço";
+            // 
+            // txtInstrumento2
+            // 
+            txtInstrumento2.Location = new Point(416, 111);
+            txtInstrumento2.Name = "txtInstrumento2";
+            txtInstrumento2.Size = new Size(99, 23);
+            txtInstrumento2.TabIndex = 8;
+            txtInstrumento2.Text = "Instrumento2";
+            // 
+            // txtPreco1
+            // 
+            txtPreco1.Location = new Point(158, 159);
+            txtPreco1.Name = "txtPreco1";
+            txtPreco1.Size = new Size(237, 23);
+            txtPreco1.TabIndex = 9;
             // 
             // txtNomeInstrumento2
             // 
@@ -77,12 +88,12 @@
             txtNomeInstrumento2.Size = new Size(237, 23);
             txtNomeInstrumento2.TabIndex = 10;
             // 
-            // textBox2
+            // txtPreco2
             // 
-            textBox2.Location = new Point(541, 159);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(237, 23);
-            textBox2.TabIndex = 11;
+            txtPreco2.Location = new Point(541, 159);
+            txtPreco2.Name = "txtPreco2";
+            txtPreco2.Size = new Size(237, 23);
+            txtPreco2.TabIndex = 11;
             // 
             // btnTotal
             // 
@@ -169,9 +180,12 @@
             Controls.Add(lblVendas);
             Controls.Add(lblLoja);
             Controls.Add(btnTotal);
-            Controls.Add(textBox2);
+            Controls.Add(txtOutroPreco);
+            Controls.Add(txtPreco2);
             Controls.Add(txtNomeInstrumento2);
-            Controls.Add(textBox1);
+            Controls.Add(txtPreco1);
+            Controls.Add(txtInstrumento2);
+            Controls.Add(txtPreco);
             Controls.Add(txtNomeInstrumento);
             Controls.Add(txtNome);
             Controls.Add(btnRegistrar);
@@ -185,96 +199,15 @@
         private Button btnRegistrar;
         private TextBox txtNome;
         private TextBox txtNomeInstrumento;
-        private TextBox textBox1;
+        private TextBox txtPreco;
+        private TextBox txtInstrumento2;
+        private TextBox txtPreco1;
         private TextBox txtNomeInstrumento2;
-        private TextBox textBox2;
+        private TextBox txtPreco2;
+        private TextBox txtOutroPreco;
         private Button btnTotal;
         private decimal totalVendas = 0;
-
-        private void RegistrarVenda()
-        {
-            string cliente = txtNome.Text.Trim();
-            string instrumento1 = txtNomeInstrumento.Text.Trim();
-            string instrumento2 = txtNomeInstrumento2.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(cliente))
-            {
-                MessageBox.Show("Digite o nome do cliente.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(instrumento1) &&
-                string.IsNullOrWhiteSpace(instrumento2))
-            {
-                MessageBox.Show("Digite pelo menos um instrumento.");
-                return;
-            }
-
-            decimal preco1 = 0;
-            decimal preco2 = 0;
-
-            if (!string.IsNullOrWhiteSpace(instrumento1) &&
-                !decimal.TryParse(textBox1.Text, out preco1))
-            {
-                MessageBox.Show("Digite um preço válido para o primeiro instrumento.");
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(instrumento2) &&
-                !decimal.TryParse(textBox2.Text, out preco2))
-            {
-                MessageBox.Show("Digite um preço válido para o segundo instrumento.");
-                return;
-            }
-
-            if (preco1 < 0 || preco2 < 0)
-            {
-                MessageBox.Show("Os preços não podem ser negativos.");
-                return;
-            }
-
-            decimal total = preco1 + preco2;
-            totalVendas += total;
-
-            MessageBox.Show(
-                $"Venda registrada!\n" +
-                $"Cliente: {cliente}\n" +
-                $"Instrumento 1: {instrumento1} - {preco1:C}\n" +
-                $"Instrumento 2: {instrumento2} - {preco2:C}\n" +
-                $"Total da venda: {total:C}\n" +
-                $"Total acumulado: {totalVendas:C}"
-            );
-        }
-
-        private void CalcularTotal()
-        {
-            decimal preco1 = 0;
-            decimal preco2 = 0;
-
-            if (!decimal.TryParse(textBox1.Text, out preco1) ||
-                !decimal.TryParse(textBox2.Text, out preco2))
-            {
-                MessageBox.Show("Preencha os dois preços corretamente.");
-                return;
-            }
-
-            if (preco1 < 0 || preco2 < 0)
-            {
-                MessageBox.Show("Os preços não podem ser negativos.");
-                return;
-            }
-
-            decimal total = preco1 + preco2;
-
-            MessageBox.Show($"Total da venda: {total:C}");
-        }
-
-        private Label lblLoja;
-        private Label lblVendas;
-        private Label lblNome;
-        private Label lblInstrumento;
-        private Label lblInstrumento2;
-        private Label lblPreco1;
-        private Label lblPreco2;
     }
 }
+
+       
