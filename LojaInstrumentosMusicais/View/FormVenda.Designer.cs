@@ -2,7 +2,13 @@
 {
     partial class FormVenda : Form
     {
+        public FormVenda()
+        {
+            InitializeComponent();
 
+            btnRegistrar.Click += (sender, e) => RegistrarVenda();
+            btnTotal.Click += (sender, e) => CalcularTotal();
+        }
         private System.ComponentModel.IContainer components = null;
 
         protected override void Dispose(bool disposing)
