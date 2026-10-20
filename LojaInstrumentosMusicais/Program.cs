@@ -11,7 +11,7 @@ namespace LojaInstrumentosMusicais
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new View.FormSplash());
+            Application.Run(new View.FormMenu());
         }
     }
 }
