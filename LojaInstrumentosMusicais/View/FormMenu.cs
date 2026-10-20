@@ -14,5 +14,24 @@ namespace LojaInstrumentosMusicais.View
         {
             InitializeComponent();
         }
+
+        private void lblSair_Click(object sender, EventArgs e)
+        {
+            Application.OpenForms["FormVenda"]?.Show();
+            this.Close();
+
+        }
+
+        private void btnVendas_Click(object sender, EventArgs e)
+        {
+            FormVenda telaVenda = new FormVenda();
+            telaVenda.ShowDialog();
+        }
+
+        private void btnRelatorio_Click(object sender, EventArgs e)
+        {
+            FormRelatorio telaRelatorio= new FormRelatorio();
+            telaRelatorio.ShowDialog();
+        }
     }
 }

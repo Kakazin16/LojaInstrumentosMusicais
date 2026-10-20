@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace LojaInstrumentosMusicais.View
 {
-    public partial class FormVendas : Form
+    public partial class FormVenda : Form
     {
-        public FormVendas()
+        public FormVenda()
         {
             InitializeComponent();
         }
